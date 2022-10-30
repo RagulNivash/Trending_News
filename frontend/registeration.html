@@ -1,0 +1,146 @@
+ 
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!--  Iconscout CSS for icons -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <!-- boxiconx CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+    rel="stylesheet"/>
+
+    <!-- link of CSS file  -->
+    <link rel="stylesheet" href="registeration.css">
+         
+    <title>Trends of Today</title>
+    <link rel="shortcut icon" href="images/applogo.png" type="image/x-icon">
+</head>
+<body>
+    
+    <div class="container">
+        <div class="pages">
+            <!-- login page -->
+            <div class="page login">
+                <span class="title">Login</span>
+
+                <form action="#">
+                    <div class="inputs">
+                        <input type="text" id="enteremail" placeholder="Enter your email" required>
+                        <i class="uil uil-envelope icon"></i>
+                    </div>
+                    <div class="inputs">
+                        <input type="password" id="password2" class="password" placeholder="Enter your password" required>
+                        <i class="uil uil-lock icon"></i>
+                        <i class="uil uil-eye-slash showHidePw"></i>
+                    </div>
+
+                    <div class="checkbox">
+                        <div class="checkboxText">
+                            <input type="checkbox" id="logCheck">
+                            <label for="logCheck" class="text">Remember me</label>
+                        </div>
+                        
+                        <a href="#" class="text">Forgot password?</a>
+                    </div>
+
+                    <div class="inputs login-signupbutton">
+                        <input class="loginbutton"  type="button" value="Login">
+                    </div>
+                </form>
+
+                <div class="loginorsignup">
+                    <span class="text">Not a member?
+                        <a href="#" class="text signup-link">Signup Now</a>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Registration page -->
+            <div class="page signup">
+                <span class="title">Registration</span>
+
+                <form action="#">
+                    <div class="textfields username">
+                        <div class="inputs">
+                            <input type="text" id="username" placeholder="Enter your name" required>
+                            <i class="uil uil-user"></i>
+                        </div>
+                        <span class="error username-error">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">This is a mandatory field</p>
+                          </span>
+
+                    </div>
+                    
+                    <div class="textfields email-input">
+                        <div class="inputs">
+                            <input type="text" placeholder="Enter your email" id="email" required>
+                            <i class="uil uil-envelope icon"></i>
+                        </div>
+                        <span class="error email-error" id="emailmsg">
+                            <!-- <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">Please enter a valid email</p> -->
+                          </span>
+
+                    </div>
+                    <div class="textfields createpassword">
+                        <div class="inputs">
+                            <input type="password" id="pass" class="password" placeholder="Create a password" class="password" required>
+                            <i class="uil uil-lock icon"></i>
+                        </div>
+                        <span class="error password-error" id="passmsg">
+                            <!-- <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">
+                              Password should have atleast 8 charatcer.
+                            </p> -->
+                          </span>
+
+                    </div>
+                    <div class="textfields confirmpassword">
+                        <div class="inputs">
+                            <input type="password" id="cnfpass" class="password" placeholder="Confirm a password" class="confirmpass" required>
+                            <i class="uil uil-lock icon"></i>
+                            <i class="uil uil-eye-slash showHidePw"></i>
+                        </div>
+                        <span class="error cPassword-error" id="cnfpassmsg">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">Passwords don't match</p>
+                        </span>
+
+                    </div>
+                    
+
+                    <div class="checkbox">
+                        <div class="checkboxText">
+                            <input type="checkbox" id="termCon">
+                            <label for="termCon" class="text">I accepted all terms and conditions</label>
+                        </div>
+                    </div>
+
+                    <div class="inputs login-signupbutton">
+                        <input type="submit" class="submit" value="Signup" />
+                    </div>
+                </form>
+
+                <div class="loginorsignup">
+                    <span class="text">Already a member?
+                        <a href="#" class="text login-link">Login Now</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="registeration.js"></script>
+</body>
+</html>
+
+
+
