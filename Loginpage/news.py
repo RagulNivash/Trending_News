@@ -38,3 +38,12 @@ def fetch_category_news(topic):
     sp_page = soup(rd, 'xml')  # scrapping data from site
     news_list = sp_page.find_all('item')  # finding news
     return news_list
+
+def fetch_location_news(topic):
+    site = 'https://news.google.com/news/rss/headlines/section/geo/{}'.format(topic)
+    op = urlopen(site)  # Open that site
+    rd = op.read()  # read data from site
+    op.close()  # close the object
+    sp_page = soup(rd, 'xml')  # scrapping data from site
+    news_list = sp_page.find_all('item')  # finding news
+    return news_list
