@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import LoginManager, UserMixin
 from flask_login import login_user, logout_user, current_user, login_required
- 
+from news import *
  
 #create the object of Flask
 app  = Flask(__name__)
@@ -114,6 +114,16 @@ def register():
  
     return render_template('registration.html', form=form)
  
+
+#news
+
+@app.route('/news/')
+def news():
+    # modify here
+    news_list=fetch_top_news()#fetchcategorynews(cat)
+    return render_template('news.html', newslist = news_list)
+ 
+
  
  
  
