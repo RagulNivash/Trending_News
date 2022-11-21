@@ -23,7 +23,7 @@ blueprint = make_google_blueprint(
     client_id="240639012288-6nf6mpvdsbblc8dmt417b54ufcnm3eqk.apps.googleusercontent.com",
     client_secret="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",
     # reprompt_consent=True,
-    offline=True,
+    offline=False,
     scope=["profile", "email"]
 )
 app.register_blueprint(blueprint, url_prefix="/login") 
@@ -31,7 +31,7 @@ app.register_blueprint(blueprint, url_prefix="/login")
 #SqlAlchemy Database Configuration With Mysql
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/crud'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://qpfjxdwumwbvph:990a8728ff9b5b8854131e69d2e7cad6ab593aaa3c29eb8f4eafea3a26d3f1f9@ec2-44-195-132-31.compute-1.amazonaws.com:5432/df05mekf689kmr'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://spdycygtnurafi:c3a7622b6147567e3decab2b5ad5f4324858f7d5bccb6bdb323e1775ce156c1f@ec2-52-21-207-163.compute-1.amazonaws.com:5432/d49t7177ug8vt3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
  
  
