@@ -5,6 +5,8 @@
  
 {% block body %}
  
+
+<button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#mymodalupdate">Update Profile</button>
 <div class="container">
     <div class="row">
         <div class="col md-12">
@@ -18,9 +20,9 @@
                 <a href = "/news/" ><button type="button"  class="btn btn-success float-right" data-toggle="modal">Trending</button></a>
 
                 </h3>
-
+                
  
- 
+               
                 <table class="table table-hover table-dark">
  
                     <tr>
@@ -44,7 +46,64 @@
  
                 </table>
   
+<div id="mymodalupdate" class="modal fade" role="dialog">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
 
+            <h4 class="modal-title">Update {{email}}</h4>
+        </div>
+        <div class="modal-body">
+<!-- form action here -->
+            <form action="/update" method="POST"> 
+
+
+            <div class="form-group">
+
+                <label>username</label>
+                <input type="text" class="form-control" name="username" required="1" disabled = True placeholder="{{email}}">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Password</label>
+                <input type="text" class="form-control" name="password" required="1">
+
+            </div>
+
+            <div class="form-group">
+
+
+                <button class="btn btn-primary" type="submit">Update</button>
+
+
+            </div>
+
+
+            </form>
+
+
+        </div>
+
+
+        <div class="modal-footer">
+
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+</div>
+                
 <div id="mymodal1" class="modal fade" role="dialog">
 <div class="modal-dialog">
     <div class="modal-content">

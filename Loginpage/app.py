@@ -23,15 +23,16 @@ blueprint = make_google_blueprint(
     client_id="240639012288-6nf6mpvdsbblc8dmt417b54ufcnm3eqk.apps.googleusercontent.com",
     client_secret="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",
     # reprompt_consent=True,
-    offline=False,
+    offline=True,
     scope=["profile", "email"]
 )
-app.register_blueprint(blueprint, url_prefix="/login") 
+app.register_blueprint(blueprint, url_prefix="/logins") 
 
 #SqlAlchemy Database Configuration With Mysql
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/crud'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/crud'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://spdycygtnurafi:c3a7622b6147567e3decab2b5ad5f4324858f7d5bccb6bdb323e1775ce156c1f@ec2-52-21-207-163.compute-1.amazonaws.com:5432/d49t7177ug8vt3'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://exvvlptnrscohn:d6151b341fdd4276a2b25501b033961ca2d554bcc70ef62be7c86d8efc901c7e@ec2-3-219-135-162.compute-1.amazonaws.com:5432/df04t6rqgcmsr3'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
  
  
@@ -74,8 +75,11 @@ def load_user(user_id):
 def index():
  
     name = current_user.username
- 
-    return render_template('index.html', name = name)
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    email=resp.json()["email"]
+    print("Email", email)
+    return render_template('index.html', name = name,email = email)
  
  
  
@@ -83,11 +87,15 @@ def index():
 @app.route('/login' , methods = ['GET', 'POST'])
 def Login():
     form = LoginForm()
-    
-    if request.method == 'POST':
-        if form.validate_on_submit():
+    hashed_password = generate_password_hash("google", method = 'sha256')
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    email=resp.json()["email"]
+
+    if request.method == 'POST' and email != None:
+        if form.validate_on_submit(): #form.username.data != None and form.password.data != None:
             user = UserInfo.query.filter_by(username=form.username.data).first()
- 
+
             if user:
                 if check_password_hash(user.password, form.password.data):
                     login_user(user)
@@ -96,6 +104,23 @@ def Login():
  
  
                 flash("Invalid Credentials")
+    else:
+        print(email, " login")
+        user = UserInfo.query.filter_by(username=email).first()
+        print(user)
+        if user:
+            print(1)
+            if check_password_hash(user.password, hashed_password):
+                login_user(user)
+                print("in if")
+                return redirect(url_for('index'))
+        else:
+            new_register =UserInfo(username=email, password=hashed_password)
+            db.session.add(new_register)
+            db.session.commit()
+            print("in else")
+            return redirect(url_for('index'))
+                
  
     return render_template('login.html', form = form)
  
@@ -156,31 +181,51 @@ def news():
             news_list = fetch_location_news(location)    
         print(news_list)
     
-    return render_template('index.html', newslist = news_list)
- 
-@app.route("/googlelogin")
-def googlelogin():
-    hashed_password = generate_password_hash("google", method = 'sha256')
-    flag = 0
-    if not google.authorized:
-        flag = 1
-        return render_template(url_for("google.login"))
-
-
     resp = google.get("/oauth2/v2/userinfo")
     assert resp.ok, resp.text
     email=resp.json()["email"]
+    print(email, "/news")
+    return render_template('index.html', newslist = news_list,email = email)
+ 
+@app.route("/logins/google")
+def googlelogin():
+    print(1)
+    hashed_password = "dummy"
+    print(hashed_password)
+    flag = 0
+    print(2)
+    if not google.authorized:
+        flag = 1
+        return render_template(url_for("google.login"))
+    print(3)     
+
+    resp = google.get('/oauth2/v2/userinfo')
+    assert resp.ok, resp.text
+    email=resp.json()["email"]
+    print(email)
     if flag != 1:
         try:
+            print("inside try")
             new_register =UserInfo(username=email, password=hashed_password)
             db.session.add(new_register)
             db.session.commit() 
         except:
             print("existing user")
- 
+    print("123")
+    print(email,"login/google")
+    return render_template('index.html',email=email)
 
-    return render_template("index.html",email=email)
- 
+@app.route('/update', methods = ['POST'])
+def update():
+    if request.method == 'POST':
+        # password ----------------------------------------->
+        password = request.form.get('password')
+        print(password)
+
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    email=resp.json()["email"]
+    return render_template('index.html',email = email)
  
  
 #run flask app

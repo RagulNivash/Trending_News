@@ -61,21 +61,22 @@
           {{form.password.label}}
           {{form.password(size=32)}}
  
- 
+<!--  
             {% for error in form.password.errors %}
           <span style="color:red;">
  
               {{error}}
           </span>
-          {% endfor %}
+          {% endfor %} -->
  
       </p>
  
  
         <p>
             <input type="submit" value="Login" class="btn btn-success">
-            <a href="/googlelogin">
-            <img src="./oauth.JPG" alt="Google" width="100" height="132">
+            <a href="/logins/google">
+                Google
+            <!-- <img src="oauth.png" alt="Google" width="30" height="15"> -->
             </a>
         </p>
  
