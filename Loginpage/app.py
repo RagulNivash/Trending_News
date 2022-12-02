@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, request, redirect, url_for, session
+from flask import Flask, render_template, flash, request, redirect, url_for, session, jsonify
 from forms import LoginForm, RegistrationForm
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -6,6 +6,11 @@ from flask_login import LoginManager, UserMixin
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_dance.contrib.google import make_google_blueprint, google
 from news import *
+
+import logging
+from logging.handlers import RotatingFileHandler
+from time import strftime
+import traceback
 
 
 import os
@@ -60,7 +65,14 @@ class UserInfo(UserMixin, db.Model):
         self.password = password
  
  
- 
+class activitylog(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    log = db.Column(db.String(200)) 
+    
+    def __repr__(self, log):
+        self.log = log
+        
+
  
 @login_manager.user_loader
 def load_user(user_id):
@@ -164,6 +176,7 @@ def register():
 def news():
     if request.method == 'GET':
         news_list=fetch_top_news()
+        # news_list, img =fetch_top_news()
         
 
     elif request.method == 'POST':
@@ -171,20 +184,24 @@ def news():
         print("category: %s"%category)
         if category != None:
             news_list=fetch_category_news(category)
+            
         keyword = request.form.get('keyword')
         print("keyword: %s"%keyword)
         if keyword != None:
             news_list=fetch_news_search_topic(keyword)
+            
         location = request.form.get('location')
         print("location: %s"%location)
         if location != None:
-            news_list = fetch_location_news(location)    
+            news_list= fetch_location_news(location)
+               
         print(news_list)
     
     resp = google.get("/oauth2/v2/userinfo")
     assert resp.ok, resp.text
     email=resp.json()["email"]
     print(email, "/news")
+    #return render_template('index.html', newslist = news_list,email = email,img=img)
     return render_template('index.html', newslist = news_list,email = email)
  
 @app.route("/logins/google")
@@ -227,7 +244,34 @@ def update():
     email=resp.json()["email"]
     return render_template('index.html',email = email)
  
+
+@app.after_request
+@app.route('/after_request',methods = ['GET'])
+def after_request(response):
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    logger.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    # log=activitylog(logger.error)
+    # db.session.add(log)
+    # db.session.commit()
+    return response
+    return render_template('index.html')
+    
+
+@app.errorhandler(Exception)
+def exceptions(e):
+    tb = traceback.format_exc()
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    logger.error('%s %s %s %s %s 5xx INTERNAL SERVER ERROR\n%s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, tb)
+    return e.status_code
+
  
 #run flask app
 if __name__ == "__main__":
+
+    handler = RotatingFileHandler('app.log', maxBytes=100000, backupCount=3)
+    logger = logging.getLogger('tdm')
+    logger.setLevel(logging.ERROR)
+    logger.addHandler(handler)
+
+
     app.run(debug=True)

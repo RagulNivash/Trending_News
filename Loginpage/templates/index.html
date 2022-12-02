@@ -1,12 +1,74 @@
 {% extends 'base.html' %}
- 
+
+
+
  
 {% block title %} Home {% endblock %}
  
 {% block body %}
  
 
-<button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#mymodalupdate">Update Profile</button>
+
+<style>
+    .dropbtn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 9px 20px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .dropdown-content a:hover {background-color: #f1f1f1}
+    
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+    
+    .dropdown:hover .dropbtn {
+      background-color: #3e8e41;
+    }
+    </style>
+<div id="friends" class="dropdown">
+    <button class="dropbtn" style="margin:5px;">Friends</button>
+    <div class="dropdown-content">
+    <a href="#">Find friend</a>
+    <a href="#">Friend's activity</a>
+    <a href="#">Block User</a>
+    </div>
+  </div>
+
+  <!-- <button type="button"  class="btn btn-success float-left" style="margin:5px;" data-toggle="modal" data-target="#friends">Friends</button> -->
+
+
+
+
+<button type="button"  class="btn btn-success float" style="margin:5px;" data-toggle="modal" data-target="#activity">Activity log</button>
+
+<button type="button"  class="btn btn-success float" style="margin:5px;" data-toggle="modal"   data-target="#mymodalupdate">Update Profile</button>
+
 <div class="container">
     <div class="row">
         <div class="col md-12">
@@ -14,10 +76,13 @@
             <div class="jumbotron p-3">
  
                 <h3>News
-                <button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal">Category</button>
-                <button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal1">Custom</button>
-                <button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal2">Location</button>
-                <a href = "/news/" ><button type="button"  class="btn btn-success float-right" data-toggle="modal">Trending</button></a>
+                
+                
+
+                <button type="button"  class="btn btn-success float-right" data-toggle="modal" style="margin:5px;"data-target="#mymodal">Category</button>
+                <button type="button"  class="btn btn-success float-right" data-toggle="modal" style="margin:5px;"data-target="#mymodal1">Custom</button>
+                <button type="button"  class="btn btn-success float-right" data-toggle="modal" style="margin:5px;"data-target="#mymodal2">Location</button>
+                <a href = "/news/" ><button type="button"  class="btn btn-success float-right" style="margin:5px;"data-toggle="modal">Trending</button></a>
 
                 </h3>
                 
@@ -29,6 +94,8 @@
  
                         <th><h4>Title</h4></th>
                         <th><h4>Link</h4></th>
+                        <th><h4>Rate News</h4></th>
+                        <th><h4>Read later</h4></th>
 
                     </tr>
  
@@ -37,7 +104,10 @@
                     <tr>
                         <td><h5>{{news.title.text}}</h5></td>
                         <td><a href="{{news.link.text}}" class="btn btn-primary">></a></td>
- 
+                        <!-- <td><img src="{{img}}" ></td>  -->
+                        <td><button type="button" style="background-color:rgba(255, 217, 0, 0.548);" class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal3">Rate</button></td>
+                        <td><button type="button" style="background-color:rgba(255, 0, 85, 0.493);" class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal4">Later</button></td>
+
                     </tr>
  
  
@@ -46,6 +116,7 @@
  
                 </table>
   
+                
 <div id="mymodalupdate" class="modal fade" role="dialog">
 <div class="modal-dialog">
     <div class="modal-content">
@@ -103,6 +174,50 @@
 
 
 </div>
+
+
+
+
+<div id="activity" class="modal fade" role="dialog">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+    
+            <h4 class="modal-title">Activity</h4>
+        </div>
+        <div class="modal-body">
+    <!-- form action here -->
+         <li class="nav-item">
+            <form action="/after_request" METHOD="GET">
+
+            </form>
+
+         </li>   
+    
+    
+        </div>
+    
+    
+        <div class="modal-footer">
+    
+    
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    
+    
+        </div>
+    
+    </div>
+    </div>
+    
+    
+</div>
+    
+
+
+
+
+
+
                 
 <div id="mymodal1" class="modal fade" role="dialog">
 <div class="modal-dialog">
@@ -261,12 +376,79 @@
  
  
 </div>
+
+<div id="mymodal3" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+          <div class="modal-header">
+  
+             <h4 class="modal-title">Rate News</h4>
+          </div>
+          <div class="modal-body">
+  <!-- form action here -->
+             <!-- <form action="/news/" method="POST">  -->
+  
+  
+                <div class="form-group">
+  
+                   <label>Rating Scale</label>
+                   <!-- <input type="text" class="form-control" name="name" required="1"> -->
+                   <!-- <select class="form-control" name="category" required ="1"> -->
+                    <div class="rate">
+                        <input type="radio" id="star5" name="rate" value="5" />
+                        <label for="star5" title="text">5 stars</label>
+                        <input type="radio" id="star4" name="rate" value="4" />
+                        <label for="star4" title="text">4 stars</label>
+                        <input type="radio" id="star3" name="rate" value="3" />
+                        <label for="star3" title="text">3 stars</label>
+                        <input type="radio" id="star2" name="rate" value="2" />
+                        <label for="star2" title="text">2 stars</label>
+                        <input type="radio" id="star1" name="rate" value="1" />
+                        <label for="star1" title="text">1 star</label>
+                      </div>
+                     
+                   <!-- </select> -->
+  
+                </div>
+  
+                <div class="form-group">
+  
+  
+                   <button class="btn btn-primary" type="submit">Post</button>
+  
+  
+                </div>
+  
+  
+             <!-- </form> -->
+  
+  
+          </div>
+  
+  
+          <div class="modal-footer">
+  
+  
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+  
+  
+          </div>
+  
+  
+       </div>
+  
+  
+    </div>
+  
+  
+ </div>
  
  
  
  
  
         </div>
+        
  
     </div>
  
