@@ -66,13 +66,31 @@ class UserInfo(UserMixin, db.Model):
  
  
 class activitylog(db.Model):
+    __tablename__ = 'activitylog'
     id = db.Column(db.Integer, primary_key = True)
-    log = db.Column(db.String(200)) 
+    log = db.Column(db.String(500)) 
     
-    def __repr__(self, log):
-        self.log = log
-        
+    def __repr__(self):
+        return f'<log {self.log}>'
 
+# class activitylog1(db.Model):
+#     __tablename__ = 'activitylog'
+#     id = db.Column(db.Integer, primary_key = True)
+#     log = db.Column(db.String(500)) 
+    
+#     def __repr__(self):
+#         return f"log={self.log}" 
+
+class bookmark(db.Model):
+    __tablename__ = 'bookmark'
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(500)) 
+    
+    def __repr__(self):
+        return f'<title {self.title}>'        
+
+
+   
  
 @login_manager.user_loader
 def load_user(user_id):
@@ -101,9 +119,10 @@ def Login():
     form = LoginForm()
     hashed_password = generate_password_hash("google", method = 'sha256')
     resp = google.get("/oauth2/v2/userinfo")
-    assert resp.ok, resp.text
-    email=resp.json()["email"]
+    # assert resp.ok, resp.text
+    # email=resp.json()["email"]
 
+    # if request.method == 'POST':
     if request.method == 'POST' and email != None:
         if form.validate_on_submit(): #form.username.data != None and form.password.data != None:
             user = UserInfo.query.filter_by(username=form.username.data).first()
@@ -116,22 +135,22 @@ def Login():
  
  
                 flash("Invalid Credentials")
-    else:
-        print(email, " login")
-        user = UserInfo.query.filter_by(username=email).first()
-        print(user)
-        if user:
-            print(1)
-            if check_password_hash(user.password, hashed_password):
-                login_user(user)
-                print("in if")
-                return redirect(url_for('index'))
-        else:
-            new_register =UserInfo(username=email, password=hashed_password)
-            db.session.add(new_register)
-            db.session.commit()
-            print("in else")
-            return redirect(url_for('index'))
+    # else:
+    #     # print(email, " login")
+    #     # user = UserInfo.query.filter_by(username=email).first()
+    #     print(user)
+    #     if user:
+    #         print(1)
+    #         if check_password_hash(user.password, hashed_password):
+    #             login_user(user)
+    #             print("in if")
+    #             return redirect(url_for('index'))
+    #     else:
+    #         new_register =UserInfo(username=email, password=hashed_password)
+    #         db.session.add(new_register)
+    #         db.session.commit()
+    #         print("in else")
+    #         return redirect(url_for('index'))
                 
  
     return render_template('login.html', form = form)
@@ -175,34 +194,34 @@ def register():
 @app.route('/news/', methods = ['GET', 'POST'])
 def news():
     if request.method == 'GET':
-        news_list=fetch_top_news()
+        news_list,poster_list=fetch_top_news()
         # news_list, img =fetch_top_news()
-        
 
     elif request.method == 'POST':
         category =  request.form.get('category')
-        print("category: %s"%category)
+        # print("category: %s"%category)
         if category != None:
-            news_list=fetch_category_news(category)
+            news_list,poster_list=fetch_category_news(category)
             
         keyword = request.form.get('keyword')
-        print("keyword: %s"%keyword)
+        # print("keyword: %s"%keyword)
         if keyword != None:
-            news_list=fetch_news_search_topic(keyword)
+            news_list,poster_list=fetch_news_search_topic(keyword)
             
         location = request.form.get('location')
-        print("location: %s"%location)
+        # print("location: %s"%location)
         if location != None:
-            news_list= fetch_location_news(location)
+            news_list,poster_list= fetch_location_news(location)
                
-        print(news_list)
+        # print(news_list)
     
     resp = google.get("/oauth2/v2/userinfo")
     assert resp.ok, resp.text
     email=resp.json()["email"]
     print(email, "/news")
+
     #return render_template('index.html', newslist = news_list,email = email,img=img)
-    return render_template('index.html', newslist = news_list,email = email)
+    return render_template('index.html', newslist = zip(news_list,poster_list), email = email, posterlist = poster_list)
  
 @app.route("/logins/google")
 def googlelogin():
@@ -243,26 +262,59 @@ def update():
     assert resp.ok, resp.text
     email=resp.json()["email"]
     return render_template('index.html',email = email)
+
+
+@app.route('/readactivity')
+def readactivity():
  
+    activitylist = activitylog.query.all()    
+    print(activitylist)
+
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    email=resp.json()["email"]
+    return render_template('activity.html', activitylist = activitylist,email = email)
+
+@app.route('/readlater')
+def readlater():
+ 
+    readlaterlist = bookmark.query.all()    
+    print(readlaterlist)
+
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    email=resp.json()["email"]
+    return render_template('bookmark.html', readlaterlist = readlaterlist,email = email)    
+
+
+@app.route('/later/<string:title>', methods = ["GET", "POST"])
+def later(title):
+    print(title)
+    title1=bookmark(title= str(title))
+    db.session.add(title1)
+    db.session.commit()
+    
+    return redirect(url_for('news'))
 
 @app.after_request
 @app.route('/after_request',methods = ['GET'])
 def after_request(response):
     timestamp = strftime('[%Y-%b-%d %H:%M]')
-    logger.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
-    # log=activitylog(logger.error)
-    # db.session.add(log)
-    # db.session.commit()
+    logger.error('timestamp= %s IP %s Method %s  Scheme %s PATH %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    log1='timestamp= %s IP %s Method %s  Scheme %s %s'%( timestamp, request.remote_addr, request.method, request.scheme, response.status)
+    log=activitylog(log= str(log1))
+    db.session.add(log)
+    db.session.commit()
     return response
-    return render_template('index.html')
+    # return render_template('index.html')
     
 
-@app.errorhandler(Exception)
-def exceptions(e):
-    tb = traceback.format_exc()
-    timestamp = strftime('[%Y-%b-%d %H:%M]')
-    logger.error('%s %s %s %s %s 5xx INTERNAL SERVER ERROR\n%s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, tb)
-    return e.status_code
+# @app.errorhandler(Exception)
+# def exceptions(e):
+#     tb = traceback.format_exc()
+#     timestamp = strftime('[%Y-%b-%d %H:%M]')
+#     logger.error('timestamp= %s IP %s Method %s  Scheme %s PATH %s 5xx INTERNAL SERVER ERROR\n%s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, "tb")
+#     return e.status_code
 
  
 #run flask app

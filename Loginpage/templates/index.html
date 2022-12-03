@@ -65,7 +65,8 @@
 
 
 
-<button type="button"  class="btn btn-success float" style="margin:5px;" data-toggle="modal" data-target="#activity">Activity log</button>
+<a href = "/readactivity" ><button type="button"  class="btn btn-success float" style="margin:5px;">Activity log</button></a>
+<a href = "/readlater" ><button type="button"  class="btn btn-success float" style="margin:5px;">Book Mark</button></a>
 
 <button type="button"  class="btn btn-success float" style="margin:5px;" data-toggle="modal"   data-target="#mymodalupdate">Update Profile</button>
 
@@ -91,7 +92,7 @@
                 <table class="table table-hover table-dark">
  
                     <tr>
- 
+                        <th><h4>Poster</h4></th>
                         <th><h4>Title</h4></th>
                         <th><h4>Link</h4></th>
                         <th><h4>Rate News</h4></th>
@@ -100,13 +101,15 @@
                     </tr>
  
  
-                   {% for news in newslist %}
+                   {% for news,poster in newslist %}
                     <tr>
+                        <td><img src = "{{poster}}" width="100" height="100"></td>
                         <td><h5>{{news.title.text}}</h5></td>
                         <td><a href="{{news.link.text}}" class="btn btn-primary">></a></td>
                         <!-- <td><img src="{{img}}" ></td>  -->
                         <td><button type="button" style="background-color:rgba(255, 217, 0, 0.548);" class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal3">Rate</button></td>
-                        <td><button type="button" style="background-color:rgba(255, 0, 85, 0.493);" class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal4">Later</button></td>
+                        <td><a href = "/later/{{news.title.text}}" ><button type="button" style="background-color:rgba(255, 0, 85, 0.493);" class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal4">Later</button></a></td>
+                        
 
                     </tr>
  
